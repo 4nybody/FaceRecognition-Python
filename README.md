@@ -7,3 +7,10 @@ python 3.11+
 ```pip install pyqt5```
 ```pip install pyqt5-tools```
 ```pip install face-recognition```
+
+fixed:
+Database locking??
+
+to be added:
+Admin panel
+create user panel
