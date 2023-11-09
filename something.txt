@@ -30,14 +30,13 @@ class Ui_OutputDialog(QDialog):
         self.create_tables()
 
         self.user_clock_in_status_dict = {}
+        self.TimeList1 = {}  # Initialize TimeList1 as an empty dictionary
+        self.TimeList2 = {}
 
         self.ClockInButton.clicked.connect(self.on_clockInButton_clicked)
         self.ClockOutButton.clicked.connect(self.on_clockOutButton_clicked)
 
         self.class_names = []
-        self.TimeList1 = {}
-        self.TimeList2 = {}
-
         self.clock_in_status = False
         self.user_name = ""
         self.clock_in_pending = False
@@ -109,32 +108,34 @@ class Ui_OutputDialog(QDialog):
     @pyqtSlot()
     def on_clockInButton_clicked(self):
         if not self.clock_in_status:
-            recognized_user_id = self.recognized_user_id
+            recognized_user_name = self.get_user_name_by_id(self.recognized_user_id)
 
-            if recognized_user_id:
-                recognized_user_name = self.get_user_name_by_id(recognized_user_id)
-
-                if self.user_clock_in_status_dict.get(recognized_user_id, False):
+            if recognized_user_name:
+                if self.user_clock_in_status_dict.get(recognized_user_name, False):
                     QMessageBox.warning(self, 'Clock In Error', f'{recognized_user_name} has already clocked in.')
                     return
 
                 date_time_string = datetime.datetime.now().strftime("%y/%m/%d %H:%M:%S")
                 cursor = self.conn.cursor()
                 cursor.execute("INSERT INTO attendance (user_id, date_time, action) VALUES (?, ?, ?)",
-                               (recognized_user_id, date_time_string, "Clock In"))
+                               (recognized_user_name, date_time_string, "Clock In"))
                 self.conn.commit()
+
                 with open('Attendance.csv', 'a') as f:
                     buttonReply = QMessageBox.question(self, 'Welcome ' + recognized_user_name, 'Are you Clocking In?',
                                                        QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
                     if buttonReply == QMessageBox.Yes:
-                        f.writelines(f'\n{recognized_user_id},{date_time_string},Clock In')
+                        f.writelines(f'\n{recognized_user_name},{date_time_string},Clock In')
                         self.ClockInButton.setChecked(False)
                         self.StatusLabel.setText('Clocked In')
                         self.HoursLabel.setText('Measuring')
                         self.MinLabel.setText('')
+
+                        # Record the current time when the user clocks in again
                         self.Time1 = datetime.datetime.now()
+
                         self.user_name = recognized_user_name
-                        self.user_clock_in_status_dict[recognized_user_id] = True
+                        self.user_clock_in_status_dict[recognized_user_name] = True
                         self.clock_in_status = True  # Set the overall clock-in status to True
                         self.ClockInButton.setEnabled(True)
                     else:
@@ -149,27 +150,22 @@ class Ui_OutputDialog(QDialog):
 
     @pyqtSlot()
     def on_clockOutButton_clicked(self):
-        if self.clock_in_status:
-            recognized_user_id = self.recognized_user_id
+        recognized_user_name = self.get_user_name_by_id(self.recognized_user_id)
 
-            if recognized_user_id:
-                recognized_user_name = self.get_user_name_by_id(recognized_user_id)
-
-                if not self.user_clock_in_status_dict.get(recognized_user_id, False):
-                    QMessageBox.warning(self, 'Clock Out Error', f'{recognized_user_name} has not clocked in.')
-                    return
-
+        if recognized_user_name:
+            if self.user_clock_in_status_dict.get(recognized_user_name, False):
                 date_time_string = datetime.datetime.now().strftime("%y/%m/%d %H:%M:%S")
                 cursor = self.conn.cursor()
                 cursor.execute("INSERT INTO attendance (user_id, date_time, action) VALUES (?, ?, ?)",
-                               (recognized_user_id, date_time_string, "Clock Out"))
+                               (recognized_user_name, date_time_string, "Clock Out"))
                 self.conn.commit()
+
                 with open('Attendance.csv', 'a') as f:
                     buttonReply = QMessageBox.question(self, 'Cheers ' + recognized_user_name, 'Are you Clocking Out?',
                                                        QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
                     if buttonReply == QMessageBox.Yes:
                         date_time_string = datetime.datetime.now().strftime("%y/%m/%d %H:%M:%S")
-                        f.writelines(f'\n{recognized_user_id},{date_time_string},Clock Out')
+                        f.writelines(f'\n{recognized_user_name},{date_time_string},Clock Out')
                         self.ClockOutButton.setChecked(False)
                         self.StatusLabel.setText('Clocked Out')
                         self.Time2 = datetime.datetime.now()
@@ -184,10 +180,15 @@ class Ui_OutputDialog(QDialog):
 
                             elapse_hours, minutes = divmod((check_out_time - check_in_time).total_seconds(), 3600)
                             minutes //= 60
+                            print(f'Clocked in: {recognized_user_name}, Time1: {self.TimeList1[recognized_user_name]}')
 
                             self.MinLabel.setText("{:.0f}".format(minutes) + 'm')
-                            self.HoursLabel.setText("{:.2f}".format(elapse_hours) + 'h')
-                            # print(f'Set labels: Minutes: {minutes}, Hours: {hours}')
+                            self.HoursLabel.setText("{:.0f}".format(elapse_hours) + 'h')
+                            print(f'Set labels: Minutes: {minutes}, Hours: {elapse_hours}')
+
+                            # Reset the dictionary when the user clocks out
+                            self.user_clock_in_status_dict.pop(recognized_user_name, None)
+                            self.TimeList1.pop(recognized_user_name, None)
 
                             # Force GUI update
                             QtWidgets.QApplication.processEvents()
@@ -196,18 +197,18 @@ class Ui_OutputDialog(QDialog):
                             print(f'Clocked out: {recognized_user_name}, Time1 not found.')
                             self.MinLabel.setText('')
                             self.HoursLabel.setText('')
-                        self.user_clock_in_status_dict[recognized_user_id] = False
+                        self.user_clock_in_status_dict.pop(recognized_user_name, None)
                         self.clock_in_status = False  # Reset the overall clock-in status
                         self.ClockOutButton.setEnabled(True)
                     else:
                         self.ClockOutButton.setChecked(False)
                         self.ClockOutButton.setEnabled(True)
             else:
-                QMessageBox.warning(self, 'Recognition Error', 'Unable to recognize the user for Clock Out.')
-                self.ClockOutButton.setChecked(False)
-                self.ClockOutButton.setEnabled(True)
+                QMessageBox.warning(self, 'Clock Out Error', f'{recognized_user_name} has not clocked in.')
         else:
-            QMessageBox.warning(self, 'Not Clocked In', 'You are not clocked in.')
+            QMessageBox.warning(self, 'Recognition Error', 'Unable to recognize the user for Clock Out.')
+            self.ClockOutButton.setChecked(False)
+            self.ClockOutButton.setEnabled(True)
 
     def face_rec_(self, frame):
         faces_cur_frame = face_recognition.face_locations(frame)
@@ -269,6 +270,7 @@ class Ui_OutputDialog(QDialog):
                 Time1 = None
                 Time2 = None
                 for row in csv_reader:
+                    print(row)  # Add this line to see the content of each row
                     if row and len(row) >= 3:
                         name = row[0]
                         date_time = row[1]
@@ -276,9 +278,12 @@ class Ui_OutputDialog(QDialog):
                         if name == user_name:
                             if action == 'Clock In':
                                 Time1 = datetime.datetime.strptime(date_time, '%y/%m/%d %H:%M:%S')
+                                self.TimeList1[user_name] = Time1  # Update TimeList1 when the user clocks in
                             elif action == 'Clock Out':
                                 Time2 = datetime.datetime.strptime(date_time, '%y/%m/%d %H:%M:%S')
 
+                if Time1 is None and Time2 is not None:
+                    Time1 = datetime.datetime.now()
                 if Time1 is not None and Time2 is not None:
                     self.TimeList1[user_name] = Time1
                     self.TimeList2[user_name] = Time2
@@ -313,6 +318,7 @@ class Ui_OutputDialog(QDialog):
                     self.imgLabel.setScaledContents(True)
         except Exception as e:
             print(f"Error in displayImage: {e}")
+
 
 if __name__ == '__main__':
     import sys

@@ -148,7 +148,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Date :</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Time :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </item>
@@ -163,7 +163,7 @@
        </font>
       </property>
       <property name="text">
-       <string>-</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Time :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </item>
@@ -178,7 +178,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Time :</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Time :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </item>
@@ -193,7 +193,7 @@
        </font>
       </property>
       <property name="text">
-       <string>-</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Time :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </item>
@@ -208,6 +208,13 @@
      <height>271</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">font: 8pt &quot;Stencil&quot;;
+color: white;
+border-radius: 10px;
+background-color: rgb(0, 95, 0);
+border-color: 2px rgb(0, 0, 0);</string>
+   </property>
    <property name="title">
     <string>Details</string>
    </property>
@@ -216,7 +223,7 @@
      <rect>
       <x>30</x>
       <y>30</y>
-      <width>100</width>
+      <width>114</width>
       <height>211</height>
      </rect>
     </property>
@@ -225,14 +232,15 @@
       <widget class="QLabel" name="label_3">
        <property name="font">
         <font>
-         <family>Roboto Condensed Light</family>
-         <pointsize>12</pointsize>
+         <family>Stencil</family>
+         <pointsize>8</pointsize>
          <weight>50</weight>
+         <italic>false</italic>
          <bold>false</bold>
         </font>
        </property>
        <property name="text">
-        <string>Name : </string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Name : &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </item>
@@ -240,14 +248,15 @@
       <widget class="QLabel" name="label_4">
        <property name="font">
         <font>
-         <family>Roboto Condensed Light</family>
-         <pointsize>12</pointsize>
+         <family>Stencil</family>
+         <pointsize>8</pointsize>
          <weight>50</weight>
+         <italic>false</italic>
          <bold>false</bold>
         </font>
        </property>
        <property name="text">
-        <string>Status :</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Status :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </item>
@@ -255,14 +264,18 @@
       <widget class="QLabel" name="label_5">
        <property name="font">
         <font>
-         <family>Roboto Condensed Light</family>
-         <pointsize>12</pointsize>
+         <family>Stencil</family>
+         <pointsize>8</pointsize>
          <weight>50</weight>
+         <italic>false</italic>
          <bold>false</bold>
         </font>
        </property>
        <property name="text">
-        <string>Clocked Time : </string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Clocked Time : &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="wordWrap">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -282,9 +295,10 @@
       <widget class="QLabel" name="NameLabel">
        <property name="font">
         <font>
-         <family>Roboto Condensed Light</family>
-         <pointsize>12</pointsize>
+         <family>Stencil</family>
+         <pointsize>8</pointsize>
          <weight>50</weight>
+         <italic>false</italic>
          <bold>false</bold>
         </font>
        </property>
@@ -297,9 +311,10 @@
       <widget class="QLabel" name="StatusLabel">
        <property name="font">
         <font>
-         <family>Roboto Condensed Light</family>
-         <pointsize>12</pointsize>
+         <family>Stencil</family>
+         <pointsize>8</pointsize>
          <weight>50</weight>
+         <italic>false</italic>
          <bold>false</bold>
         </font>
        </property>
@@ -314,9 +329,10 @@
         <widget class="QLabel" name="HoursLabel">
          <property name="font">
           <font>
-           <family>Roboto Condensed Light</family>
-           <pointsize>12</pointsize>
+           <family>Stencil</family>
+           <pointsize>8</pointsize>
            <weight>50</weight>
+           <italic>false</italic>
            <bold>false</bold>
           </font>
          </property>
@@ -329,9 +345,10 @@
         <widget class="QLabel" name="MinLabel">
          <property name="font">
           <font>
-           <family>Roboto Condensed Light</family>
-           <pointsize>12</pointsize>
+           <family>Stencil</family>
+           <pointsize>8</pointsize>
            <weight>50</weight>
+           <italic>false</italic>
            <bold>false</bold>
           </font>
          </property>
