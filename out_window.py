@@ -214,19 +214,19 @@ class Ui_OutputDialog(QDialog):
         faces_cur_frame = face_recognition.face_locations(frame)
         encodes_cur_frame = face_recognition.face_encodings(frame, faces_cur_frame)
 
-        recognized_user_id = None
+        recognized_user_name = None
 
         for encodeFace, faceLoc in zip(encodes_cur_frame, faces_cur_frame):
             match = face_recognition.compare_faces(self.encode_list, encodeFace, tolerance=0.50)
             face_dis = face_recognition.face_distance(self.encode_list, encodeFace)
-            name = "unknown"
+            # name = "unknown"
             best_match_index = np.argmin(face_dis)
 
             if match[best_match_index]:
-                recognized_user_id = self.class_names[best_match_index]
-                self.recognized_user_id = recognized_user_id
+                recognized_user_name = self.class_names[best_match_index]
+                self.recognized_user_id = recognized_user_name
 
-                recognized_user_name = self.get_user_name_by_id(recognized_user_id)
+                recognized_user_name = self.get_user_name_by_id(recognized_user_name)
 
                 (top, right, bottom, left) = faceLoc
                 if recognized_user_name:
@@ -237,7 +237,7 @@ class Ui_OutputDialog(QDialog):
 
                     self.user_name = recognized_user_name
                     self.NameLabel.setText(recognized_user_name)
-
+                else:
                     if self.clock_in_status and self.user_name == recognized_user_name:
                         self.StatusLabel.setText('Clocked In')
                         self.HoursLabel.setText('Measuring')
@@ -274,7 +274,6 @@ class Ui_OutputDialog(QDialog):
                 Time1 = None
                 Time2 = None
                 for row in csv_reader:
-                    print(row)  # Add this line to see the content of each row
                     if row and len(row) >= 3:
                         name = row[0]
                         date_time = row[1]
@@ -286,8 +285,7 @@ class Ui_OutputDialog(QDialog):
                             elif action == 'Clock Out':
                                 Time2 = datetime.datetime.strptime(date_time, '%y/%m/%d %H:%M:%S')
 
-                if Time1 is None and Time2 is not None:
-                    Time1 = datetime.datetime.now()
+                # Update TimeList2 with the name instead of the ID
                 if Time1 is not None and Time2 is not None:
                     self.TimeList1[user_name] = Time1
                     self.TimeList2[user_name] = Time2
